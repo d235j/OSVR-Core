@@ -28,6 +28,7 @@
 // Internal Includes
 #include <osvr/Common/PathTreeObserverPtr.h>
 #include <osvr/Common/PathTree.h>
+#include <osvr/Common/Export.h>
 
 // Library/third-party includes
 #include <boost/noncopyable.hpp>
@@ -40,14 +41,23 @@ namespace osvr {
 namespace common {
     class PathTreeOwner : private boost::noncopyable {
       public:
-        PathTreeOwner();
+        OSVR_COMMON_EXPORT PathTreeOwner();
+        /// @brief reports whether the path tree has been populated.
+        explicit operator bool() const { return m_valid; }
 
-        PathTreeObserverPtr makeObserver();
+        /// @brief Make an observer object that can hold callbacks for tree
+        /// updates. Callbacks are called in the order their observers were
+        /// created.
+        OSVR_COMMON_EXPORT PathTreeObserverPtr makeObserver();
+        OSVR_COMMON_EXPORT void replaceTree(Json::Value const &nodes);
 
-      protected:
+        PathTree &get() { return m_tree; }
+        PathTree const &get() const { return m_tree; }
+
       private:
         PathTree m_tree;
         std::vector<PathTreeObserverWeakPtr> m_observers;
+        bool m_valid = false;
     };
 } // namespace common
 } // namespace osvr

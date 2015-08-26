@@ -34,15 +34,19 @@
 namespace osvr {
 namespace common {
 
-    void PathTreeObserver::notifyEvent(PathTreeEvents e, PathTreeOwner &tree) {
-        auto &callback = m_handlers[e];
-        if (callback) {
-            callback(tree);
+    void PathTreeObserver::notifyEvent(
+        PathTreeEvents e, PathTreeObserver::callback_argument arg) const {
+        auto it = m_handlers.find(e);
+        if (end(m_handlers) != it) {
+            auto &callback = (*it).second;
+            if (callback) {
+                callback(arg);
+            }
         }
     }
 
-    void PathTreeObserver::setEventCallback(PathTreeEvents e,
-                                            callback_type const &callback) {
+    void PathTreeObserver::setEventCallback(
+        PathTreeEvents e, PathTreeObserver::callback_type const &callback) {
         m_handlers[e] = callback;
     }
 
