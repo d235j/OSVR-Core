@@ -26,7 +26,9 @@
 #define INCLUDED_PathTreeObserver_h_GUID_229F0106_AC97_4997_0239_0900C9CB9A54
 
 // Internal Includes
+#include <osvr/Common/PathTree_fwd.h>
 #include <osvr/Common/PathTreeObserverPtr.h>
+#include <osvr/Common/Export.h>
 
 // Library/third-party includes
 #include <boost/noncopyable.hpp>
@@ -38,12 +40,15 @@
 namespace osvr {
 namespace common {
     class PathTreeOwner;
-    enum class PathTreeEvents { AboutToUpdate, AfterUpdate };
+    enum class PathTreeEvents : std::size_t { AboutToUpdate, AfterUpdate };
     class PathTreeObserver : public boost::noncopyable {
       public:
-        void notifyEvent(PathTreeEvents e, PathTreeOwner &tree);
-        using callback_type = std::function<void(PathTreeOwner &)>;
-        void setEventCallback(PathTreeEvents e, callback_type const &callback);
+        using callback_argument = PathTree &;
+        void notifyEvent(PathTreeEvents e, callback_argument arg) const;
+
+        using callback_type = std::function<void(callback_argument)>;
+        OSVR_COMMON_EXPORT void setEventCallback(PathTreeEvents e,
+                                                 callback_type const &callback);
 
       protected:
         PathTreeObserver() = default;

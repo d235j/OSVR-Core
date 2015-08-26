@@ -25,6 +25,7 @@
 // Internal Includes
 #include <osvr/common/PathTreeOwner.h>
 #include <osvr/common/PathTreeObserver.h>
+#include <osvr/Common/PathTreeSerialization.h>
 
 // Library/third-party includes
 // - none
@@ -70,5 +71,21 @@ namespace common {
     }
 
     PathTreeOwner::PathTreeOwner() {}
+
+    void PathTreeOwner::replaceTree(Json::Value const &nodes) {
+        for_each_cleanup_pointers(
+            m_observers, [&](PathTreeObserver const &observer) {
+                observer.notifyEvent(PathTreeEvents::AboutToUpdate, m_tree);
+            });
+
+        m_tree.reset();
+
+        common::jsonToPathTree(m_tree, nodes);
+
+        for_each_cleanup_pointers(
+            m_observers, [&](PathTreeObserver const &observer) {
+                observer.notifyEvent(PathTreeEvents::AfterUpdate, m_tree);
+            });
+    }
 } // namespace common
 } // namespace osvr

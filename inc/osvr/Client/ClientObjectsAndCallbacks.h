@@ -25,10 +25,12 @@
 #ifndef INCLUDED_ClientObjectsAndCallbacks_h_GUID_DEA36722_2353_4980_2CF5_666C5D531004
 #define INCLUDED_ClientObjectsAndCallbacks_h_GUID_DEA36722_2353_4980_2CF5_666C5D531004
 
-
 // Internal Includes
 #include <osvr/Common/PathTree.h>
 #include <osvr/Common/ClientInterfacePtr.h>
+#include <osvr/Common/PathTreeObserverPtr.h>
+#include <osvr/Common/PathTreeOwner.h>
+#include <osvr/Common/PathTree_fwd.h>
 #include <osvr/Client/InterfaceTree.h>
 
 // Library/third-party includes
@@ -37,41 +39,39 @@
 // Standard includes
 #include <string>
 
-
 namespace osvr {
-    namespace client {
+namespace client {
 
-        class ClientObjectsAndCallbacks {
-            public:
-                void addInterface(common::ClientInterfacePtr const &iface);
-                void releaseInterface(common::ClientInterfacePtr const &iface);
-                common::PathTree const &getPathTree() const;
-            private:
-                /// @brief Given a path, remove any existing handler for that path, then
-                /// attempt to fully resolve the path to its source and construct a
-                /// handler for it.
-                ///
-                /// @return true if we were able to connect the path.
-                bool m_connectCallbacksOnPath(std::string const &path);
+    class ClientObjectsAndCallbacks {
+      public:
+        explicit ClientObjectsAndCallbacks(common::PathTreeOwner &tree);
 
-                /// @brief Given a path, remove any existing handler for that path from
-                /// both the handler container and the interface tree.
-                void m_removeCallbacksOnPath(std::string const &path);
+        void addInterface(common::ClientInterfacePtr const &iface);
+        void releaseInterface(common::ClientInterfacePtr const &iface);
 
+      private:
+        /// @brief Given a path, remove any existing handler for that path, then
+        /// attempt to fully resolve the path to its source and construct a
+        /// handler for it.
+        ///
+        /// @return true if we were able to connect the path.
+        bool m_connectCallbacksOnPath(std::string const &path);
 
-                /// @brief Calls m_connectCallbacksOnPath() for every path that has one
-                /// or more interface objects but no remote handler.
-                void m_connectNeededCallbacks();
+        /// @brief Given a path, remove any existing handler for that path from
+        /// both the handler container and the interface tree.
+        void m_removeCallbacksOnPath(std::string const &path);
 
-                /// @brief Path tree
-                common::PathTree m_pathTree;
+        /// @brief Calls m_connectCallbacksOnPath() for every path that has one
+        /// or more interface objects but no remote handler.
+        void m_connectNeededCallbacks();
 
-                /// @brief Tree parallel to path tree for holding interface objects and
-                /// remote handlers.
-                InterfaceTree m_interfaces;
-        };
-    } // namespace client
+        /// @brief Tree parallel to path tree for holding interface objects and
+        /// remote handlers.
+        InterfaceTree m_interfaces;
+        common::PathTree & m_tree;
+        common::PathTreeObserverPtr m_treeObserver;
+    };
+} // namespace client
 } // namespace osvr
 
 #endif // INCLUDED_ClientObjectsAndCallbacks_h_GUID_DEA36722_2353_4980_2CF5_666C5D531004
-
