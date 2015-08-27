@@ -68,7 +68,7 @@ namespace client {
         /// @brief Tree parallel to path tree for holding interface objects and
         /// remote handlers.
         InterfaceTree m_interfaces;
-        common::PathTree & m_tree;
+        common::PathTree &m_tree;
         common::PathTreeObserverPtr m_treeObserver;
     };
 } // namespace client
