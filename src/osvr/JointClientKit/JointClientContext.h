@@ -36,6 +36,7 @@
 #include "../Client/VRPNConnectionCollection.h"
 #include <osvr/Client/InterfaceTree.h>
 #include "../Client/RemoteHandlerFactory.h"
+#include <osvr/Server/ServerPtr.h>
 
 // Library/third-party includes
 #include <vrpn_ConnectionPtr.h>
@@ -95,6 +96,8 @@ namespace client {
 
         /// @brief the vrpn_Connection corresponding to m_host
         vrpn_ConnectionPtr m_mainConn;
+
+        server::ServerPtr m_server;
 
         /// @brief The "OSVR" system device for control messages
         common::BaseDevicePtr m_systemDevice;

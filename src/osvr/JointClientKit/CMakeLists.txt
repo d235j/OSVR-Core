@@ -30,6 +30,7 @@ target_link_libraries(${LIBNAME_FULL}
     osvrClient
     osvrUtilCpp
     osvrCommon
+    osvrServer
     jsoncpp_lib
     vendored-vrpn
     eigen-headers)

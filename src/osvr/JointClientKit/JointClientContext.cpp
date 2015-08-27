@@ -36,8 +36,8 @@
 #include <osvr/Util/Verbosity.h>
 #include <osvr/Util/TreeTraversalVisitor.h>
 #include <osvr/Common/DeduplicatingFunctionWrapper.h>
-
-#include <boost/algorithm/string.hpp>
+#include <osvr/Connection/Connection.h>
+#include <osvr/Server/Server.h>
 
 // Library/third-party includes
 #include <json/reader.h>
@@ -60,8 +60,17 @@ namespace client {
         /// Create all the remote handler factories.
         populateRemoteHandlerFactory(m_factory, m_vrpnConns);
 
-        m_mainConn = vrpn_create_server_connection("loopback:");
+        /// creates the OSVR connection with its nested VRPN connection
+        auto conn = connection::Connection::createLoopbackConnection();
+
+        /// Get the VRPN connection out and use it.
+        m_mainConn = static_cast<vrpn_Connection *>(std::get<0>(conn));
         m_vrpnConns.addConnection(m_mainConn, m_host);
+
+        /// Get the OSVR connection out and use it to make a server.
+        m_server = server::Server::create(std::get<1>(conn));
+        m_server->loadAutoPlugins();
+        m_server->triggerHardwareDetect();
 
         std::string sysDeviceName =
             std::string(common::SystemComponent::deviceName()) + "@" + m_host;
@@ -90,6 +99,9 @@ namespace client {
     JointClientContext::~JointClientContext() {}
 
     void JointClientContext::m_update() {
+        /// Run the server
+        m_server->update();
+
         /// Mainloop connections
         m_vrpnConns.updateAll();
 
