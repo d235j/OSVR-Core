@@ -3,16 +3,22 @@
     "com_osvr_VideoBasedHMDTracker" /* This is a manual-load plugin, so we must explicitly list it */
   ],
   "aliases": {
-    "/me/head": { /* This is a null rotation and change of basis, just showing syntax. */
+    "/me/head": {
+      /* The change of basis and rotation below take the native camera */
+      /* coordinate system into one where the HDK is looking at the */
+      /* origin of the coordinate system (the camera) with the Y axis */
+      /* pointing up if the camera is upright and the Z axis pointing */
+      /* away from the camera.  This effectively describes the way that */
+      /* the tracker "sensor" is mounted onto the HDK. */
       "postrotate": {
-        "axis": "x",
-        "degrees": 0
+        "axis": "z",
+        "degrees": 180
       },
       "child": {
         "changeBasis": {
-          "x": "x",
+          "x": "-x",
           "y": "y",
-          "z": "z"
+          "z": "-z"
         },
         "child": "/com_osvr_VideoBasedHMDTracker/TrackedCamera0_0/tracker/0"
       }
