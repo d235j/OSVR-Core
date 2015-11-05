@@ -52,7 +52,9 @@
 // being able to open the OSVR HDK camera using OpenCV.
 /// @todo Remove this code and the DirectShow stuff once the camera can be read
 /// by OpenCV
+#ifdef _WIN32
 #define VBHMD_USE_DIRECTSHOW
+#endif
 #ifdef VBHMD_USE_DIRECTSHOW
 #include "directx_camera_server.h"
 #include "DirectShowHDKCameraFactory.h"
@@ -493,7 +495,7 @@ class HardwareDetection {
 #else
         // Autodetect camera.
         cam.reset(new cv::VideoCapture(m_cameraID));
-        if (!cap->isOpened()) {
+        if (!cam->isOpened()) {
             // Failed to find camera
             return OSVR_RETURN_FAILURE;
         }

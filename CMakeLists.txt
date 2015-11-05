@@ -77,7 +77,7 @@ if(BUILD_CLIENT AND BUILD_SERVER)
     set(BUILD_ANALYSISPLUGINKIT ON)
 endif()
 
-set(BUILD_VIDEOTRACKER_PLUGIN OFF)
+set(BUILD_VIDEOTRACKER_PLUGIN ON)
 # TODO enable this on non-Windows once it's not tied to the DirectShow driver.
 if(WIN32 AND BUILD_SERVER_PLUGINS)
     # TODO fix this package so it finds things on MSYS2/MinGW64
